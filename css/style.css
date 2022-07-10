@@ -1,0 +1,8 @@
+#footer:before {
+    background: url(https://hawkingl.cn/BlogPic/v2-e2d44e7a08227e26d892f827076b89df_r.jpg);
+    z-index: 1;
+}
+
+#footer-wrap {
+    z-index: 2;
+}
