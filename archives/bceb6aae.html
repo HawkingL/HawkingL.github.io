@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>什么是socket | L先生的博客</title><meta name="keywords" content="socket"><meta name="author" content="L先生"><meta name="copyright" content="L先生"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="什么是socket Socket是应用层与TCP&#x2F;IP协议族通信的中间软件抽象层，它是一组接口。在设计模式中，Socket其实就是一个门面模式，它把复杂的TCP&#x2F;IP协议族隐藏在Socket接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。  工作原理服务器端先初始化Socket，然后与端口绑定(bind)，对端口进行监听(listen)，调用accept阻">
+<meta property="og:type" content="article">
+<meta property="og:title" content="什么是socket">
+<meta property="og:url" content="https://www.hawkingl.cn/archives/bceb6aae.html">
+<meta property="og:site_name" content="L先生的博客">
+<meta property="og:description" content="什么是socket Socket是应用层与TCP&#x2F;IP协议族通信的中间软件抽象层，它是一组接口。在设计模式中，Socket其实就是一个门面模式，它把复杂的TCP&#x2F;IP协议族隐藏在Socket接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。  工作原理服务器端先初始化Socket，然后与端口绑定(bind)，对端口进行监听(listen)，调用accept阻">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hawkingl.cn/BlogPic/20190718154523875.png">
+<meta property="article:published_time" content="2022-07-11T05:02:45.000Z">
+<meta property="article:modified_time" content="2022-07-11T05:05:13.531Z">
+<meta property="article:author" content="L先生">
+<meta property="article:tag" content="socket">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hawkingl.cn/BlogPic/20190718154523875.png"><link rel="shortcut icon" href="https://hawkingl.cn/BlogPic/blog_favicon .ico"><link rel="canonical" href="https://www.hawkingl.cn/archives/bceb6aae"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-qeL696M0ys"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":30,"languages":{"author":"作者: L先生","link":"链接: ","source":"来源: L先生的博客","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '什么是socket',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-07-11 13:05:13'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    document.addEventListener('pjax:complete', detectApple)})(window)</script><link rel="stylesheet" href="./css/style.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/20210411234449_0c9e4.jpeg" onerror="onerror=null;src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://hawkingl.cn/BlogPic/v2-3d7a580c5009e9e61e3cab628d497316_1440w.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">L先生的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">什么是socket</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-07-11T05:02:45.000Z" title="发表于 2022-07-11 13:02:45">2022-07-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-07-11T05:05:13.531Z" title="更新于 2022-07-11 13:05:13">2022-07-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/">计算机基础</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>9分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="什么是socket"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="什么是socket"><a href="#什么是socket" class="headerlink" title="什么是socket"></a>什么是socket</h2><p> Socket是应用层与TCP/IP协议族通信的中间软件抽象层，它是一组接口。在设计模式中，Socket其实就是一个门面模式，它把复杂的TCP/IP协议族隐藏在Socket接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/20190718154523875.png" alt="img"></p>
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><p>服务器端先初始化Socket，然后与端口绑定(bind)，对端口进行监听(listen)，调用accept阻塞，等待客户端连接。在这时如果有个客户端初始化一个Socket，然后连接服务器(connect)，如果连接成功，这时客户端与服务器端的连接就建立了。客户端发送数据请求，服务器端接收请求并处理请求，然后把回应数据发送给客户端，客户端读取数据，最后关闭连接，一次交互结束。</p>
+<p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/20190718154556909.png" alt="img"></p>
+<h2 id="3、socket的基本操作"><a href="#3、socket的基本操作" class="headerlink" title="3、socket的基本操作"></a>3、socket的基本操作</h2><p>既然socket是“open—write/read—close”模式的一种实现，那么socket就提供了这些操作对应的函数接口。下面以TCP为例，介绍几个基本的socket接口函数。</p>
+<h3 id="3-1、socket-函数"><a href="#3-1、socket-函数" class="headerlink" title="3.1、socket()函数"></a>3.1、socket()函数</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int socket(int domain, int type, int protocol);</span><br></pre></td></tr></table></figure>
+
+<p>socket函数对应于普通文件的打开操作。普通文件的打开操作返回一个文件描述字，而**socket()**用于创建一个socket描述符（socket descriptor），它唯一标识一个socket。这个socket描述字跟文件描述字一样，后续的操作都有用到它，把它作为参数，通过它来进行一些读写操作。</p>
+<p>正如可以给fopen的传入不同参数值，以打开不同的文件。创建socket的时候，也可以指定不同的参数创建不同的socket描述符，socket函数的三个参数分别为：</p>
+<ul>
+<li>domain：即协议域，又称为协议族（family）。常用的协议族有，AF_INET、AF_INET6、AF_LOCAL（或称AF_UNIX，Unix域socket）、AF_ROUTE等等。协议族决定了socket的地址类型，在通信中必须采用对应的地址，如AF_INET决定了要用ipv4地址（32位的）与端口号（16位的）的组合、AF_UNIX决定了要用一个绝对路径名作为地址。</li>
+<li>type：指定socket类型。常用的socket类型有，SOCK_STREAM、SOCK_DGRAM、SOCK_RAW、SOCK_PACKET、SOCK_SEQPACKET等等（socket的类型有哪些？）。</li>
+<li>protocol：故名思意，就是指定协议。常用的协议有，IPPROTO_TCP、IPPTOTO_UDP、IPPROTO_SCTP、IPPROTO_TIPC等，它们分别对应TCP传输协议、UDP传输协议、STCP传输协议、TIPC传输协议（这个协议我将会单独开篇讨论！）。</li>
+</ul>
+<p>注意：并不是上面的type和protocol可以随意组合的，如SOCK_STREAM不可以跟IPPROTO_UDP组合。当protocol为0时，会自动选择type类型对应的默认协议。</p>
+<p>当我们调用<strong>socket</strong>创建一个socket时，返回的socket描述字它存在于协议族（address family，AF_XXX）空间中，但没有一个具体的地址。如果想要给它赋值一个地址，就必须调用bind()函数，否则就当调用connect()、listen()时系统会自动随机分配一个端口。</p>
+<h3 id="3-2、bind-函数"><a href="#3-2、bind-函数" class="headerlink" title="3.2、bind()函数"></a>3.2、bind()函数</h3><p>正如上面所说bind()函数把一个地址族中的特定地址赋给socket。例如对应AF_INET、AF_INET6就是把一个ipv4或ipv6地址和端口号组合赋给socket。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);</span><br></pre></td></tr></table></figure>
+
+<p>函数的三个参数分别为：</p>
+<ul>
+<li><p>sockfd：即socket描述字，它是通过socket()函数创建了，唯一标识一个socket。bind()函数就是将给这个描述字绑定一个名字。</p>
+</li>
+<li><p>addr：一个const struct sockaddr *指针，指向要绑定给sockfd的协议地址。这个地址结构根据地址创建socket时的地址协议族的不同而不同，如ipv4对应的是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">struct sockaddr_in &#123;</span><br><span class="line">    sa_family_t    sin_family; </span><br><span class="line">    in_port_t      sin_port;   </span><br><span class="line">    struct in_addr sin_addr;   </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">struct in_addr &#123;</span><br><span class="line">    uint32_t       s_addr;     </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>ipv6对应的是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">struct sockaddr_in6 &#123; </span><br><span class="line">    sa_family_t     sin6_family;    </span><br><span class="line">    in_port_t       sin6_port;      </span><br><span class="line">    uint32_t        sin6_flowinfo;  </span><br><span class="line">    struct in6_addr sin6_addr;      </span><br><span class="line">    uint32_t        sin6_scope_id;  </span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct in6_addr &#123; </span><br><span class="line">    unsigned char   s6_addr[16];    </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>Unix域对应的是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#define UNIX_PATH_MAX    108</span><br><span class="line"></span><br><span class="line">struct sockaddr_un &#123; </span><br><span class="line">    sa_family_t sun_family;                </span><br><span class="line">    char        sun_path[UNIX_PATH_MAX];   </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li><p>addrlen：对应的是地址的长度。</p>
+</li>
+</ul>
+<p>通常服务器在启动的时候都会绑定一个众所周知的地址（如ip地址+端口号），用于提供服务，客户就可以通过它来接连服务器；而客户端就不用指定，有系统自动分配一个端口号和自身的ip地址组合。这就是为什么通常服务器端在listen之前会调用bind()，而客户端就不会调用，而是在connect()时由系统随机生成一个。</p>
+<blockquote>
+<h3 id="网络字节序与主机字节序"><a href="#网络字节序与主机字节序" class="headerlink" title="网络字节序与主机字节序"></a>网络字节序与主机字节序</h3><p><strong>主机字节序</strong>就是我们平常说的大端和小端模式：不同的CPU有不同的字节序类型，这些字节序是指整数在内存中保存的顺序，这个叫做主机序。引用标准的Big-Endian和Little-Endian的定义如下：</p>
+<p>　　a) Little-Endian就是低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。</p>
+<p>　　b) Big-Endian就是高位字节排放在内存的低地址端，低位字节排放在内存的高地址端。</p>
+<p><strong>网络字节序</strong>：4个字节的32 bit值以下面的次序传输：首先是0～7bit，其次8～15bit，然后16～23bit，最后是24~31bit。这种传输次序称作大端字节序。<strong>由于TCP/IP首部中所有的二进制整数在网络中传输时都要求以这种次序，因此它又称作网络字节序。</strong>字节序，顾名思义字节的顺序，就是大于一个字节类型的数据在内存中的存放顺序，一个字节的数据没有顺序的问题了。</p>
+<p>所以： 在将一个地址绑定到socket的时候，请先将主机字节序转换成为网络字节序，而不要假定主机字节序跟网络字节序一样使用的是Big-Endian。由于 这个问题曾引发过血案！公司项目代码中由于存在这个问题，导致了很多莫名其妙的问题，所以请谨记对主机字节序不要做任何假定，务必将其转化为网络字节序再 赋给socket。</p>
+</blockquote>
+<p>3.3、listen()、connect()函数</p>
+<p>如果作为一个服务器，在调用socket()、bind()之后就会调用listen()来监听这个socket，如果客户端这时调用connect()发出连接请求，服务器端就会接收到这个请求。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">int listen(int sockfd, int backlog);</span><br><span class="line">int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);</span><br></pre></td></tr></table></figure>
+
+<p>listen函数的第一个参数即为要监听的socket描述字，第二个参数为相应socket可以排队的最大连接个数。socket()函数创建的socket默认是一个主动类型的，listen函数将socket变为被动类型的，等待客户的连接请求。</p>
+<p>connect函数的第一个参数即为客户端的socket描述字，第二参数为服务器的socket地址，第三个参数为socket地址的长度。客户端通过调用connect函数来建立与TCP服务器的连接。</p>
+<h3 id="3-4、accept-函数"><a href="#3-4、accept-函数" class="headerlink" title="3.4、accept()函数"></a>3.4、accept()函数</h3><p>TCP服务器端依次调用socket()、bind()、listen()之后，就会监听指定的socket地址了。TCP客户端依次调用socket()、connect()之后就想TCP服务器发送了一个连接请求。TCP服务器监听到这个请求之后，就会调用accept()函数取接收请求，这样连接就建立好了。之后就可以开始网络I/O操作了，即类同于普通文件的读写I/O操作。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);</span><br></pre></td></tr></table></figure>
+
+<p>accept函数的第一个参数为服务器的socket描述字，第二个参数为指向struct sockaddr *的指针，用于返回客户端的协议地址，第三个参数为协议地址的长度。如果accpet成功，那么其返回值是由内核自动生成的一个全新的描述字，代表与返回客户的TCP连接。</p>
+<p>注意：accept的第一个参数为服务器的socket描述字，是服务器开始调用socket()函数生成的，称为监听socket描述字；而accept函数返回的是已连接的socket描述字。一个服务器通常通常仅仅只创建一个监听socket描述字，它在该服务器的生命周期内一直存在。内核为每个由服务器进程接受的客户连接创建了一个已连接socket描述字，当服务器完成了对某个客户的服务，相应的已连接socket描述字就被关闭。</p>
+<h3 id="3-5、read-、write-等函数"><a href="#3-5、read-、write-等函数" class="headerlink" title="3.5、read()、write()等函数"></a>3.5、read()、write()等函数</h3><p>万事具备只欠东风，至此服务器与客户已经建立好连接了。可以调用网络I/O进行读写操作了，即实现了网咯中不同进程之间的通信！网络I/O操作有下面几组：</p>
+<ul>
+<li>read()/write()</li>
+<li>recv()/send()</li>
+<li>readv()/writev()</li>
+<li>recvmsg()/sendmsg()</li>
+<li>recvfrom()/sendto()</li>
+</ul>
+<p>我推荐使用recvmsg()/sendmsg()函数，这两个函数是最通用的I/O函数，实际上可以把上面的其它函数都替换成这两个函数。它们的声明如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#include </span><br><span class="line"></span><br><span class="line">ssize_t read(int fd, void *buf, size_t count);</span><br><span class="line">ssize_t write(int fd, const void *buf, size_t count);</span><br><span class="line"></span><br><span class="line">#include </span><br><span class="line">#include </span><br><span class="line"></span><br><span class="line">ssize_t send(int sockfd, const void *buf, size_t len, int flags);</span><br><span class="line">ssize_t recv(int sockfd, void *buf, size_t len, int flags);</span><br><span class="line"></span><br><span class="line">ssize_t sendto(int sockfd, const void *buf, size_t len, int flags,</span><br><span class="line">               const struct sockaddr *dest_addr, socklen_t addrlen);</span><br><span class="line">ssize_t recvfrom(int sockfd, void *buf, size_t len, int flags,</span><br><span class="line">                 struct sockaddr *src_addr, socklen_t *addrlen);</span><br><span class="line"></span><br><span class="line">ssize_t sendmsg(int sockfd, const struct msghdr *msg, int flags);</span><br><span class="line">ssize_t recvmsg(int sockfd, struct msghdr *msg, int flags);</span><br></pre></td></tr></table></figure>
+
+<p>read函数是负责从fd中读取内容.当读成功时，read返回实际所读的字节数，如果返回的值是0表示已经读到文件的结束了，小于0表示出现了错误。如果错误为EINTR说明读是由中断引起的，如果是ECONNREST表示网络连接出了问题。</p>
+<p>write函数将buf中的nbytes字节内容写入文件描述符fd.成功时返回写的字节 数。失败时返回-1，并设置errno变量。在网络程序中，当我们向套接字文件描述符写时有俩种可能。1)write的返回值大于0，表示写了部分或者是 全部的数据。2)返回的值小于0，此时出现了错误。我们要根据错误类型来处理。如果错误为EINTR表示在写的时候出现了中断错误。如果为EPIPE表示 网络连接出现了问题(对方已经关闭了连接)。</p>
+<p>其它的我就不一一介绍这几对I/O函数了，具体参见man文档或者baidu、Google，下面的例子中将使用到send/recv。</p>
+<h3 id="3-6、close-函数"><a href="#3-6、close-函数" class="headerlink" title="3.6、close()函数"></a>3.6、close()函数</h3><p>在服务器与客户端建立连接之后，会进行一些读写操作，完成了读写操作就要关闭相应的socket描述字，好比操作完打开的文件要调用fclose关闭打开的文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#include </span><br><span class="line">int close(int fd);</span><br></pre></td></tr></table></figure>
+
+<p>close一个TCP socket的缺省行为时把该socket标记为以关闭，然后立即返回到调用进程。该描述字不能再由调用进程使用，也就是说不能再作为read或write的第一个参数。</p>
+<p>注意：close操作只是使相应socket描述字的引用计数-1，只有当引用计数为0的时候，才会触发TCP客户端向服务器发送终止连接请求。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">L先生</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.hawkingl.cn/archives/bceb6aae.html">https://www.hawkingl.cn/archives/bceb6aae.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.hawkingl.cn" target="_blank">L先生的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/socket/">socket</a></div><div class="post_share"><div class="social-share" data-image="https://hawkingl.cn/BlogPic/20190718154523875.png" data-sites="qq,weibo,facebook,twitter,wechat"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/archives/37dd0ac.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-3d7a580c5009e9e61e3cab628d497316_1440w.jpg" onerror="onerror=null;src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">微信小程序中npm的使用</div></div></a></div><div class="next-post pull-right"><a href="/archives/3edd50e0.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-58cf069d244d933a0f32b7156a30b324_r.jpg" onerror="onerror=null;src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">前端那些让你欲罢不能的工具</div></div></a></div></nav><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NDcwNS8zMTE3Ng=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/20210411234449_0c9e4.jpeg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="avatar"/></div><div class="author-info__name">L先生</div><div class="author-info__description">爱你所爱，行你所行，听从你心，无问西东</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">21</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">15</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/StephenWillianHawking"><i class="fab fa-github"></i><span>Follow Me Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/StephenWillianHawking" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://gitee.com/HawkingL" rel="external nofollow noreferrer" target="_blank" title="gitee"><i class="fab fa-git-square"></i></a><a class="social-icon" href="/2968216209@qq.com" target="_blank" title="QQ邮箱"><i class="fab fa-qq"></i></a><a class="social-icon" href="/%E9%A3%9E%E5%93%A5%E6%9C%89%E5%93%81" target="_blank" title="公众号"><i class="fas fa-user-circle"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"><a href= "http://feige.web3v.work" target="_blank">喵小淘购物网站成功上线<a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFsocket"><span class="toc-number">1.</span> <span class="toc-text">什么是socket</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="toc-number">2.</span> <span class="toc-text">工作原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81socket%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="toc-number">3.</span> <span class="toc-text">3、socket的基本操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1%E3%80%81socket-%E5%87%BD%E6%95%B0"><span class="toc-number">3.1.</span> <span class="toc-text">3.1、socket()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2%E3%80%81bind-%E5%87%BD%E6%95%B0"><span class="toc-number">3.2.</span> <span class="toc-text">3.2、bind()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%AD%97%E8%8A%82%E5%BA%8F%E4%B8%8E%E4%B8%BB%E6%9C%BA%E5%AD%97%E8%8A%82%E5%BA%8F"><span class="toc-number">3.3.</span> <span class="toc-text">网络字节序与主机字节序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4%E3%80%81accept-%E5%87%BD%E6%95%B0"><span class="toc-number">3.4.</span> <span class="toc-text">3.4、accept()函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-5%E3%80%81read-%E3%80%81write-%E7%AD%89%E5%87%BD%E6%95%B0"><span class="toc-number">3.5.</span> <span class="toc-text">3.5、read()、write()等函数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-6%E3%80%81close-%E5%87%BD%E6%95%B0"><span class="toc-number">3.6.</span> <span class="toc-text">3.6、close()函数</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/2d3c4965.html" title="JavaScript中深拷贝和浅拷贝的区别及实现"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-adeeb3d5b0d44bbf5bcf2dbef53eaff5_1440w.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="JavaScript中深拷贝和浅拷贝的区别及实现"/></a><div class="content"><a class="title" href="/archives/2d3c4965.html" title="JavaScript中深拷贝和浅拷贝的区别及实现">JavaScript中深拷贝和浅拷贝的区别及实现</a><time datetime="2022-07-11T05:13:03.000Z" title="发表于 2022-07-11 13:13:03">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/19d6c420.html" title="Javascript中常用的处理数组的方法"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-780d2703ad47bb32a7fc7c218933d9a0_1440w.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="Javascript中常用的处理数组的方法"/></a><div class="content"><a class="title" href="/archives/19d6c420.html" title="Javascript中常用的处理数组的方法">Javascript中常用的处理数组的方法</a><time datetime="2022-07-11T05:08:49.000Z" title="发表于 2022-07-11 13:08:49">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/37dd0ac.html" title="微信小程序中npm的使用"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-3d7a580c5009e9e61e3cab628d497316_1440w.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="微信小程序中npm的使用"/></a><div class="content"><a class="title" href="/archives/37dd0ac.html" title="微信小程序中npm的使用">微信小程序中npm的使用</a><time datetime="2022-07-11T05:05:45.000Z" title="发表于 2022-07-11 13:05:45">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/bceb6aae.html" title="什么是socket"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/20190718154523875.png" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="什么是socket"/></a><div class="content"><a class="title" href="/archives/bceb6aae.html" title="什么是socket">什么是socket</a><time datetime="2022-07-11T05:02:45.000Z" title="发表于 2022-07-11 13:02:45">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/3edd50e0.html" title="前端那些让你欲罢不能的工具"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-58cf069d244d933a0f32b7156a30b324_r.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="前端那些让你欲罢不能的工具"/></a><div class="content"><a class="title" href="/archives/3edd50e0.html" title="前端那些让你欲罢不能的工具">前端那些让你欲罢不能的工具</a><time datetime="2022-07-11T05:00:29.000Z" title="发表于 2022-07-11 13:00:29">2022-07-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://hawkingl.cn/BlogPic/12334456.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By L先生</div><div class="footer_custom_text">welcome to my blog</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="加油,奋斗,努力" data-fontsize="15px" data-random="false" async="async"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (true) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.removeEventListener('scroll', window.tocScrollFn)
+  window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
