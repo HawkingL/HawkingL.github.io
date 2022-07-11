@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vue源码之指令和生命周期 | L先生的博客</title><meta name="keywords" content="Vue源码"><meta name="author" content="L先生"><meta name="copyright" content="L先生"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="该篇主要是对前面所有技术的总结，每一个算法在整个Vue框架中的哪一个环节运行，在什么时候执行，只针对Vue框架中的核心功能进行演示，不对细节进行处理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue源码之指令和生命周期">
+<meta property="og:url" content="https://www.hawkingl.cn/archives/f966f55d.html">
+<meta property="og:site_name" content="L先生的博客">
+<meta property="og:description" content="该篇主要是对前面所有技术的总结，每一个算法在整个Vue框架中的哪一个环节运行，在什么时候执行，只针对Vue框架中的核心功能进行演示，不对细节进行处理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hawkingl.cn/BlogPic/v2-8fe77e92614d1a2e35d8d355eeeee45c_1440w.jpg">
+<meta property="article:published_time" content="2022-07-11T02:26:42.000Z">
+<meta property="article:modified_time" content="2022-07-11T02:32:07.185Z">
+<meta property="article:author" content="L先生">
+<meta property="article:tag" content="Vue源码">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://hawkingl.cn/BlogPic/v2-8fe77e92614d1a2e35d8d355eeeee45c_1440w.jpg"><link rel="shortcut icon" href="https://hawkingl.cn/BlogPic/blog_favicon .ico"><link rel="canonical" href="https://www.hawkingl.cn/archives/f966f55d"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="baidu-site-verification" content="code-qeL696M0ys"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":30,"languages":{"author":"作者: L先生","link":"链接: ","source":"来源: L先生的博客","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Vue源码之指令和生命周期',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-07-11 10:32:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    document.addEventListener('pjax:complete', detectApple)})(window)</script><link rel="stylesheet" href="./css/style.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/20210411234449_0c9e4.jpeg" onerror="onerror=null;src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://hawkingl.cn/BlogPic/v2-7cb0dbd256c6f738c73e60c9620a5470_1440w.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">L先生的博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 档案</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 项目</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Vue源码之指令和生命周期</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-07-11T02:26:42.000Z" title="发表于 2022-07-11 10:26:42">2022-07-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-07-11T02:32:07.185Z" title="更新于 2022-07-11 10:32:07">2022-07-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Vue/">Vue</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Vue源码之指令和生命周期"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Vue源码之指令和生命周期"><a href="#Vue源码之指令和生命周期" class="headerlink" title="Vue源码之指令和生命周期"></a>Vue源码之指令和生命周期</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>该篇主要是对前面所有技术的总结，每一个算法在整个Vue框架中的哪一个环节运行，在什么时候执行，只针对Vue框架中的核心功能进行演示，不对细节进行处理。</p>
+<h2 id="测试环境的搭建"><a href="#测试环境的搭建" class="headerlink" title="测试环境的搭建"></a>测试环境的搭建</h2><p><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/Snipaste_2022-06-21_15-45-51.jpg"></p>
+<h3 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h3><p>npm i webpack@5 -D</p>
+<p>npm i webpack-cli@4 -D</p>
+<p>npm i webpack-dev-server@4 -D</p>
+<h3 id="webpack-config-js"><a href="#webpack-config-js" class="headerlink" title="webpack.config.js"></a>webpack.config.js</h3><p>配置整个程序的入口和出口文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">mode</span>: <span class="string">&#x27;development&#x27;</span>,</span><br><span class="line">  <span class="attr">entry</span>: <span class="string">&#x27;./src/index.js&#x27;</span>,</span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="attr">publicPath</span>: <span class="string">&#x27;/xuni/&#x27;</span>,</span><br><span class="line">    <span class="attr">filename</span>: <span class="string">&#x27;bundle.js&#x27;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">devServer</span>: &#123;</span><br><span class="line">    <span class="attr">port</span>: <span class="number">8080</span>,</span><br><span class="line">    <span class="attr">static</span>: &#123;</span><br><span class="line">      <span class="attr">directory</span>: path.join(__dirname, <span class="string">&#x27;www&#x27;</span>),</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h2><p>index.js</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;IE=edge&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">h1</span>&gt;</span>指令和生命周期<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span></span><br><span class="line">    你好&#123;&#123;a&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">h3</span> <span class="attr">class</span>=<span class="string">&quot;box&quot;</span> <span class="attr">v-if</span>=<span class="string">&quot;a &gt; 0&quot;</span>&gt;</span>你好&#123;&#123;a&#125;&#125;<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">v-model</span>=<span class="string">&quot;a&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span>&gt;</span>A<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span>&gt;</span>B<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">li</span>&gt;</span>C<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;./xuni/bundle.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> vm = <span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">      <span class="attr">el</span>: <span class="string">&#x27;#app&#x27;</span>,</span></span><br><span class="line"><span class="javascript">      <span class="attr">data</span>: &#123;</span></span><br><span class="line"><span class="javascript">        <span class="attr">a</span>: <span class="number">10</span></span></span><br><span class="line"><span class="javascript">      &#125;,</span></span><br><span class="line"><span class="javascript">      <span class="attr">watch</span>: &#123;</span></span><br><span class="line"><span class="javascript">        <span class="function"><span class="title">a</span>(<span class="params"></span>)</span> &#123;</span></span><br><span class="line"><span class="javascript">          <span class="built_in">console</span>.log(<span class="string">&quot;a改变了&quot;</span>);</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">      &#125;</span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>index.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&quot;./Vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">// @ts-ignore</span></span><br><span class="line"><span class="built_in">window</span>.Vue = Vue;</span><br></pre></td></tr></table></figure>
+
+<p>Vue.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Compile <span class="keyword">from</span> <span class="string">&quot;./Compile&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; observe &#125; <span class="keyword">from</span> <span class="string">&quot;./observe&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> Watcher <span class="keyword">from</span> <span class="string">&quot;./Watcher&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">Vue</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">options</span>)</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.$options = options || &#123;&#125;;</span><br><span class="line">    <span class="comment">//数据</span></span><br><span class="line">    <span class="built_in">this</span>._data = options.data || <span class="literal">undefined</span>;</span><br><span class="line">    <span class="comment">//将传入的data中的数据变为响应式的</span></span><br><span class="line">    observe(<span class="built_in">this</span>._data);</span><br><span class="line">    <span class="comment">//将传入的data中的数据绑定在Vue实例上</span></span><br><span class="line">    <span class="built_in">this</span>._initData();</span><br><span class="line">    <span class="comment">//默认调用watch</span></span><br><span class="line">    <span class="built_in">this</span>._initWatch();</span><br><span class="line">    <span class="comment">//将数据变为响应式的</span></span><br><span class="line">    <span class="comment">//模板编译</span></span><br><span class="line">    <span class="keyword">new</span> Compile(options.el, <span class="built_in">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="title">_initData</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> self = <span class="built_in">this</span>; </span><br><span class="line">    <span class="comment">//将传入的data中的数据绑定在Vue实例上</span></span><br><span class="line">    <span class="built_in">Object</span>.keys(<span class="built_in">this</span>._data).forEach(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="built_in">Object</span>.defineProperty(self, key, &#123;</span><br><span class="line">        <span class="function"><span class="title">get</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">          <span class="keyword">return</span> self._data[key];</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="function"><span class="title">set</span>(<span class="params">newVal</span>)</span> &#123;</span><br><span class="line">          self._data[key] = newVal;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="title">_initWatch</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> self = <span class="built_in">this</span>;</span><br><span class="line">    <span class="keyword">var</span> watch = <span class="built_in">this</span>.$options.watch;</span><br><span class="line">    <span class="built_in">Object</span>.keys(watch).forEach(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">new</span> Watcher(self, key, watch[key])</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Complie.js</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Watcher <span class="keyword">from</span> <span class="string">&quot;./Watcher&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="class"><span class="keyword">class</span> <span class="title">Compile</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">el, vue</span>)</span> &#123;</span><br><span class="line">    <span class="comment">//vue实例</span></span><br><span class="line">    <span class="built_in">this</span>.$vue = vue;</span><br><span class="line">    <span class="comment">//挂载点</span></span><br><span class="line">    <span class="built_in">this</span>.$el = <span class="built_in">document</span>.querySelector(el); </span><br><span class="line">    <span class="comment">//如果用户传入了挂载点时</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.$el) &#123;</span><br><span class="line">      <span class="comment">//调用函数，让节点变为fragment,实际上就是将真实节点变为mustache中的tokens数组，使用的是AST抽象语法树</span></span><br><span class="line">      <span class="keyword">let</span> $fragment = <span class="built_in">this</span>.node2Fragment(<span class="built_in">this</span>.$el);</span><br><span class="line">      <span class="comment">//编译模板</span></span><br><span class="line">      <span class="built_in">this</span>.compile($fragment);</span><br><span class="line">      <span class="comment">//将编译好的模板上树</span></span><br><span class="line">      <span class="built_in">this</span>.$el.appendChild($fragment);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="title">node2Fragment</span>(<span class="params">el</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> fragment = <span class="built_in">document</span>.createDocumentFragment();</span><br><span class="line">    <span class="keyword">var</span> child;</span><br><span class="line">    <span class="comment">//注意：使用appendChild添加子元素时，如果该子元素是从真实DOM节点中获取到的则会删除他原来在真实DOM节点中的位置</span></span><br><span class="line">    <span class="keyword">while</span> (child = el.firstChild) &#123;</span><br><span class="line">      fragment.appendChild(child);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> fragment;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="title">compile</span>(<span class="params">el</span>)</span> &#123;</span><br><span class="line">    <span class="comment">//获取节点子元素</span></span><br><span class="line">    <span class="keyword">var</span> childNodes = el.childNodes;</span><br><span class="line">    <span class="keyword">var</span> self = <span class="built_in">this</span>;</span><br><span class="line">    <span class="keyword">var</span> reg = <span class="regexp">/\&#123;\&#123;(.*)\&#125;\&#125;/</span>;</span><br><span class="line"></span><br><span class="line">    childNodes.forEach(<span class="function"><span class="params">node</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">var</span> text = node.textContent;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (node.nodeType == <span class="number">1</span>) &#123;</span><br><span class="line">        self.compileElement(node);</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (node.nodeType == <span class="number">3</span> &amp;&amp; reg.test(text)) &#123;</span><br><span class="line">        <span class="keyword">let</span> name = text.match(reg)[<span class="number">1</span>];</span><br><span class="line">        self.compileText(node, name);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="title">compileElement</span>(<span class="params">node</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> nodeAttrs = node.attributes;</span><br><span class="line">    <span class="built_in">Array</span>.prototype.slice.call(nodeAttrs).forEach(<span class="function"><span class="params">attr</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">//这里开始分析指令</span></span><br><span class="line">      <span class="keyword">var</span> attrName = attr.name;</span><br><span class="line">      <span class="keyword">var</span> value = attr.value;</span><br><span class="line">      <span class="comment">//指令开头都是v-开头的</span></span><br><span class="line">      <span class="keyword">var</span> dir = attrName.substring(<span class="number">2</span>);</span><br><span class="line">      <span class="keyword">var</span> self = <span class="built_in">this</span>;</span><br><span class="line">      </span><br><span class="line">      <span class="comment">//判断是否为指令</span></span><br><span class="line">      <span class="keyword">if</span> (attrName.indexOf(<span class="string">&#x27;v-&#x27;</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="comment">//v-开头的就是指令</span></span><br><span class="line">        <span class="keyword">if</span> (dir == <span class="string">&#x27;model&#x27;</span>) &#123;</span><br><span class="line">          <span class="comment">//双向数据绑定</span></span><br><span class="line">          <span class="keyword">new</span> Watcher(self.$vue, value, <span class="function"><span class="params">value</span> =&gt;</span> &#123;</span><br><span class="line">            node.value = value;</span><br><span class="line">          &#125;)</span><br><span class="line">          <span class="keyword">var</span> v = self.getVueVal(self.$vue, value);</span><br><span class="line">          node.value = v;</span><br><span class="line"></span><br><span class="line">          node.addEventListener(<span class="string">&#x27;input&#x27;</span>, <span class="function"><span class="params">e</span> =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">var</span> newVal = e.target.value;</span><br><span class="line"></span><br><span class="line">            self.setVueVal(self.$vue, value, newVal);</span><br><span class="line">            v = newVal;</span><br><span class="line">          &#125;)</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(dir == <span class="string">&#x27;if&#x27;</span>)&#123;</span><br><span class="line">          <span class="built_in">console</span>.log(<span class="string">&#x27;发现了if指令&#x27;</span>, value);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;); </span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="title">compileText</span>(<span class="params">node, name</span>)</span> &#123;</span><br><span class="line">    node.textContent = <span class="built_in">this</span>.getVueVal(<span class="built_in">this</span>.$vue, name);</span><br><span class="line">    <span class="keyword">new</span> Watcher(<span class="built_in">this</span>.$vue, name, <span class="function"><span class="params">value</span> =&gt;</span> &#123;</span><br><span class="line">      node.textContent = value;</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">getVueVal</span>(<span class="params">vue, exp</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> val = vue;</span><br><span class="line">    exp = exp.split(<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">    exp.forEach(<span class="function"><span class="params">k</span> =&gt;</span> &#123;</span><br><span class="line">      val = val[k];</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> val;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">setVueVal</span>(<span class="params">vue, exp, value</span>)</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> val = vue;</span><br><span class="line">    exp = exp.split(<span class="string">&#x27;.&#x27;</span>)</span><br><span class="line">    exp.forEach(<span class="function">(<span class="params">k, i</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (i &lt; exp.length - <span class="number">1</span>) &#123;</span><br><span class="line">        val = val[k];</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        val[k] = value;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined" rel="external nofollow noreferrer">L先生</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.hawkingl.cn/archives/f966f55d.html">https://www.hawkingl.cn/archives/f966f55d.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="external nofollow noreferrer" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.hawkingl.cn" target="_blank">L先生的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Vue%E6%BA%90%E7%A0%81/">Vue源码</a></div><div class="post_share"><div class="social-share" data-image="https://hawkingl.cn/BlogPic/v2-8fe77e92614d1a2e35d8d355eeeee45c_1440w.jpg" data-sites="qq,weibo,facebook,twitter,wechat"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/archives/6c562092.html"><img class="prev-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/Snipaste_2022-05-26_19-10-35.jpg" onerror="onerror=null;src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Vue源码之mustache模板引擎</div></div></a></div><div class="next-post pull-right"><a href="/archives/a64c000c.html"><img class="next-cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-f3d09f2930406c4c186d8fcf4e4d612d_1440w.jpg" onerror="onerror=null;src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">深入了解sync修饰符</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/archives/aa923dbf.html" title="Vue源码之AST抽象语法树"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-591e6208933e9df2442ef55251ccdd9b_1440w.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-11</div><div class="title">Vue源码之AST抽象语法树</div></div></a></div><div><a href="/archives/6c562092.html" title="Vue源码之mustache模板引擎"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/Snipaste_2022-05-26_19-10-35.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-11</div><div class="title">Vue源码之mustache模板引擎</div></div></a></div><div><a href="/archives/6a32cfff.html" title="Vue源码之数据响应式原理"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-67030349108004a92a7b07ce246886a3_1440w.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-11</div><div class="title">Vue源码之数据响应式原理</div></div></a></div><div><a href="/archives/8e0a33d3.html" title="Vue源码之虚拟DOM和diff算法"><img class="cover" src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-75330af94803b3fde75afeb7fafa0b19_1440w.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-07-11</div><div class="title">Vue源码之虚拟DOM和diff算法</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="lv-container" data-id="city" data-uid="MTAyMC81NDcwNS8zMTE3Ng=="></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/20210411234449_0c9e4.jpeg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="avatar"/></div><div class="author-info__name">L先生</div><div class="author-info__description">爱你所爱，行你所行，听从你心，无问西东</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">11</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener external nofollow noreferrer" href="https://github.com/StephenWillianHawking"><i class="fab fa-github"></i><span>Follow Me Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/StephenWillianHawking" rel="external nofollow noreferrer" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://gitee.com/HawkingL" rel="external nofollow noreferrer" target="_blank" title="gitee"><i class="fab fa-git-square"></i></a><a class="social-icon" href="/2968216209@qq.com" target="_blank" title="QQ邮箱"><i class="fab fa-qq"></i></a><a class="social-icon" href="/%E9%A3%9E%E5%93%A5%E6%9C%89%E5%93%81" target="_blank" title="公众号"><i class="fas fa-user-circle"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content"><a href= "http://feige.web3v.work" target="_blank">喵小淘购物网站成功上线<a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Vue%E6%BA%90%E7%A0%81%E4%B9%8B%E6%8C%87%E4%BB%A4%E5%92%8C%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.</span> <span class="toc-text">Vue源码之指令和生命周期</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">测试环境的搭建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96"><span class="toc-number">1.2.1.</span> <span class="toc-text">安装依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#webpack-config-js"><span class="toc-number">1.2.2.</span> <span class="toc-text">webpack.config.js</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="toc-number">1.3.</span> <span class="toc-text">源码解析</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/archives/6a32cfff.html" title="Vue源码之数据响应式原理"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-67030349108004a92a7b07ce246886a3_1440w.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="Vue源码之数据响应式原理"/></a><div class="content"><a class="title" href="/archives/6a32cfff.html" title="Vue源码之数据响应式原理">Vue源码之数据响应式原理</a><time datetime="2022-07-11T03:20:50.000Z" title="发表于 2022-07-11 11:20:50">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/8e0a33d3.html" title="Vue源码之虚拟DOM和diff算法"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-75330af94803b3fde75afeb7fafa0b19_1440w.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="Vue源码之虚拟DOM和diff算法"/></a><div class="content"><a class="title" href="/archives/8e0a33d3.html" title="Vue源码之虚拟DOM和diff算法">Vue源码之虚拟DOM和diff算法</a><time datetime="2022-07-11T02:44:47.000Z" title="发表于 2022-07-11 10:44:47">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/aa923dbf.html" title="Vue源码之AST抽象语法树"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-591e6208933e9df2442ef55251ccdd9b_1440w.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="Vue源码之AST抽象语法树"/></a><div class="content"><a class="title" href="/archives/aa923dbf.html" title="Vue源码之AST抽象语法树">Vue源码之AST抽象语法树</a><time datetime="2022-07-11T02:38:05.000Z" title="发表于 2022-07-11 10:38:05">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/6c562092.html" title="Vue源码之mustache模板引擎"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/Snipaste_2022-05-26_19-10-35.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="Vue源码之mustache模板引擎"/></a><div class="content"><a class="title" href="/archives/6c562092.html" title="Vue源码之mustache模板引擎">Vue源码之mustache模板引擎</a><time datetime="2022-07-11T02:31:54.000Z" title="发表于 2022-07-11 10:31:54">2022-07-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/archives/f966f55d.html" title="Vue源码之指令和生命周期"><img src= "data:image/gif;base64,R0lGODdhAQABAPAAAMPDwwAAACwAAAAAAQABAAACAkQBADs=" data-lazy-src="https://hawkingl.cn/BlogPic/v2-8fe77e92614d1a2e35d8d355eeeee45c_1440w.jpg" onerror="this.onerror=null;this.src='https://hawkingl.cn/BlogPic/v2-b63018dffb3a8aff1a12f4516582c908_r.jpg'" alt="Vue源码之指令和生命周期"/></a><div class="content"><a class="title" href="/archives/f966f55d.html" title="Vue源码之指令和生命周期">Vue源码之指令和生命周期</a><time datetime="2022-07-11T02:26:42.000Z" title="发表于 2022-07-11 10:26:42">2022-07-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://hawkingl.cn/BlogPic/12334456.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By L先生</div><div class="footer_custom_text">welcome to my blog</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (false){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>function loadLivere () {
+  if (typeof LivereTower === 'object') {
+    window.LivereTower.init()
+  }
+  else {
+    (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+    })(document, 'script');
+  }
+}
+
+if ('Livere' === 'Livere' || !false) {
+  if (false) btf.loadComment(document.getElementById('lv-container'), loadLivere)
+  else loadLivere()
+}
+else {
+  function loadOtherComment () {
+    loadLivere()
+  }
+}</script></div><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = false;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/click-show-text.min.js" data-mobile="false" data-text="加油,奋斗,努力" data-fontsize="15px" data-random="false" async="async"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (true) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.removeEventListener('scroll', window.tocScrollFn)
+  window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
